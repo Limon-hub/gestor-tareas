@@ -17,4 +17,38 @@ router.get('/', (req, res) => {
   });
 });
 
+// ✅ Ruta para crear una nueva tarea
+router.post('/', (req, res) => {
+  const { titulo, descripcion } = req.body;
+
+  // Validación básica
+  if (!titulo || titulo.trim() === '') {
+    return res.status(400).json({ error: 'El título es obligatorio' });
+  }
+
+  const query = `
+    INSERT INTO tareas (titulo, descripcion)
+    VALUES (?, ?)
+  `;
+
+  db.query(query, [titulo, descripcion], (err, result) => {
+    if (err) {
+      console.error('❌ Error al insertar tarea:', err.message);
+      return res.status(500).json({ error: 'Error al crear la tarea' });
+    }
+
+    // Devuelve la tarea recién creada
+    res.status(201).json({
+      id: result.insertId,
+      titulo,
+      descripcion,
+      completada: false,
+      creado_en: new Date()
+    });
+  });
+});
+
+
+
+
 module.exports = router;
