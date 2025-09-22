@@ -48,7 +48,54 @@ router.post('/', (req, res) => {
   });
 });
 
+// ====================
+// ACTUALIZAR UNA TAREA
+// ====================
+router.put('/:id', (req, res) => {
+  const { id } = req.params;
+  const { titulo, descripcion, completada } = req.body;
 
+  const sql = `
+    UPDATE tareas
+    SET titulo = ?, descripcion = ?, completada = ?
+    WHERE id = ?
+  `;
+
+  db.query(sql, [titulo, descripcion, completada, id], (err, result) => {
+    if (err) {
+      console.error('❌ Error al actualizar tarea:', err);
+      return res.status(500).json({ error: 'Error en el servidor' });
+    }
+
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ error: 'Tarea no encontrada' });
+    }
+
+    res.json({ message: '✅ Tarea actualizada correctamente' });
+  });
+});
+
+// ====================
+// ELIMINAR UNA TAREA
+// ====================
+router.delete('/:id', (req, res) => {
+  const { id } = req.params;
+
+  const sql = 'DELETE FROM tareas WHERE id = ?';
+
+  db.query(sql, [id], (err, result) => {
+    if (err) {
+      console.error('❌ Error al eliminar tarea:', err);
+      return res.status(500).json({ error: 'Error en el servidor' });
+    }
+
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ error: 'Tarea no encontrada' });
+    }
+
+    res.json({ message: '🗑️ Tarea eliminada correctamente' });
+  });
+});
 
 
 module.exports = router;
