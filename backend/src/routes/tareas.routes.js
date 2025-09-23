@@ -49,21 +49,23 @@ router.post('/', (req, res) => {
 });
 
 // ====================
-// ACTUALIZAR UNA TAREA
+// ACTUALIZAR UNA TAREA (solo el estado completada)
 // ====================
 router.put('/:id', (req, res) => {
   const { id } = req.params;
-  const { titulo, descripcion, completada } = req.body;
+  const { completada } = req.body;
+
+  console.log('Body recibido en PUT:', req.body);
 
   const sql = `
     UPDATE tareas
-    SET titulo = ?, descripcion = ?, completada = ?
+    SET completada = ?
     WHERE id = ?
   `;
 
-  db.query(sql, [titulo, descripcion, completada, id], (err, result) => {
+  db.query(sql, [completada, id], (err, result) => {
     if (err) {
-      console.error('❌ Error al actualizar tarea:', err);
+      console.error('❌ Error al actualizar tarea:', err.message);
       return res.status(500).json({ error: 'Error en el servidor' });
     }
 
@@ -71,7 +73,39 @@ router.put('/:id', (req, res) => {
       return res.status(404).json({ error: 'Tarea no encontrada' });
     }
 
-    res.json({ message: '✅ Tarea actualizada correctamente' });
+    res.json({ message: '✅ Estado de la tarea actualizado correctamente' });
+  });
+});
+
+// ====================
+// EDITAR TÍTULO Y DESCRIPCIÓN
+// ====================
+router.put('/:id/editar', (req, res) => {
+  const { id } = req.params;
+  const { titulo, descripcion } = req.body;
+
+  // Validación básica
+  if (!titulo || titulo.trim() === '') {
+    return res.status(400).json({ error: 'El título es obligatorio' });
+  }
+
+  const sql = `
+    UPDATE tareas
+    SET titulo = ?, descripcion = ?
+    WHERE id = ?
+  `;
+
+  db.query(sql, [titulo, descripcion, id], (err, result) => {
+    if (err) {
+      console.error('❌ Error al editar tarea:', err.message);
+      return res.status(500).json({ error: 'Error en el servidor' });
+    }
+
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ error: 'Tarea no encontrada' });
+    }
+
+    res.json({ message: '✅ Tarea editada correctamente' });
   });
 });
 
