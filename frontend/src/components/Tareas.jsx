@@ -1,5 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext  } from 'react';
 import axios from 'axios';
+import { AuthContext } from "../context/AuthContext.jsx";
+import { useNavigate } from "react-router-dom";
 
 export default function Tareas() {
     const [tareas, setTareas] = useState([]);
@@ -11,6 +13,15 @@ export default function Tareas() {
     const [editDescripcion, setEditDescripcion] = useState('');
 
   const API_URL = 'http://localhost:3000/api/tareas';
+
+
+  const { logout } = useContext(AuthContext);
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    logout();            // Limpia token y usuario
+    navigate("/login");  // Redirige a login
+  };
 
   // Obtener todas las tareas
   const fetchTareas = async () => {
@@ -66,7 +77,16 @@ const guardarEdicion = async (id) => {
   }, []);
 
 return (
-    <div className="p-6 max-w-xl mx-auto bg-gray-100 rounded-lg shadow-md mt-10">
+
+  
+    <div className="p-6 max-w-xl mx-auto bg-gray-100 rounded-lg shadow-md mt-10 relative">
+      {/* Botón fijo arriba a la derecha */}
+      <button
+        onClick={handleLogout}
+        className="absolute top-4 right-4 bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition-colors"
+      >
+        Cerrar sesión
+      </button>
       <h1 className="text-3xl font-bold mb-6 text-center text-gray-800">Gestor de Tareas</h1>
 
       {/* Formulario de creación */}
