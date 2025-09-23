@@ -65,85 +65,91 @@ const guardarEdicion = async (id) => {
     fetchTareas();
   }, []);
 
-  return (
-    <div className="p-6 max-w-xl mx-auto">
-      <h1 className="text-2xl font-bold mb-4">Gestor de Tareas</h1>
+return (
+    <div className="p-6 max-w-xl mx-auto bg-gray-100 rounded-lg shadow-md mt-10">
+      <h1 className="text-3xl font-bold mb-6 text-center text-gray-800">Gestor de Tareas</h1>
 
-      <div className="flex gap-2 mb-4">
+      {/* Formulario de creación */}
+      <div className="flex gap-3 mb-6">
         <input
-          className="border p-2 flex-1"
+          className="border border-gray-300 rounded-md p-2 flex-1 focus:outline-none focus:ring-2 focus:ring-blue-400"
           placeholder="Título"
           value={titulo}
           onChange={e => setTitulo(e.target.value)}
         />
         <input
-          className="border p-2 flex-1"
+          className="border border-gray-300 rounded-md p-2 flex-1 focus:outline-none focus:ring-2 focus:ring-blue-400"
           placeholder="Descripción"
           value={descripcion}
           onChange={e => setDescripcion(e.target.value)}
         />
         <button
-          className="bg-blue-500 text-white px-4 py-2"
+          className="bg-blue-500 hover:bg-blue-600 text-white font-semibold px-4 py-2 rounded-md transition-colors"
           onClick={crearTarea}
         >
           Agregar
         </button>
       </div>
 
-      <ul className="space-y-2">
+      {/* Lista de tareas */}
+      <ul className="space-y-3">
         {tareas.map(t => (
-  <li key={t.id} className="flex justify-between items-center border p-2">
-    {editandoId === t.id ? (
-      <>
-        <input
-          className="border p-1 flex-1 mr-2"
-          value={editTitulo}
-          onChange={e => setEditTitulo(e.target.value)}
-        />
-        <input
-          className="border p-1 flex-1 mr-2"
-          value={editDescripcion}
-          onChange={e => setEditDescripcion(e.target.value)}
-        />
-        <button
-          className="bg-green-500 text-white px-2 py-1 mr-2"
-          onClick={() => guardarEdicion(t.id)}
-        >
-          Guardar
-        </button>
-        <button
-          className="bg-gray-500 text-white px-2 py-1"
-          onClick={() => setEditandoId(null)}
-        >
-          Cancelar
-        </button>
-      </>
-    ) : (
-      <>
-        <span
-          className={t.completada ? 'line-through cursor-pointer' : 'cursor-pointer'}
-          onClick={() => actualizarTarea(t.id, t.completada)}
-        >
-          {t.titulo} - {t.descripcion}
-        </span>
-        <div className="flex gap-2">
-          <button
-            className="bg-blue-500 text-white px-2 py-1"
-            onClick={() => iniciarEdicion(t)}
+          <li
+            key={t.id}
+            className={`flex justify-between items-center border p-3 rounded-md shadow-sm transition-colors
+              ${t.completada ? 'bg-green-50 line-through text-gray-500' : 'bg-white'}`}
           >
-            Editar
-          </button>
-          <button
-            className="bg-red-500 text-white px-2 py-1"
-            onClick={() => eliminarTarea(t.id)}
-          >
-            Eliminar
-          </button>
-        </div>
-      </>
-    )}
-  </li>
-))}
+            {editandoId === t.id ? (
+              <div className="flex gap-2 flex-1 flex-wrap items-center">
+                <input
+                  className="border border-gray-300 rounded-md p-2 flex-1 focus:outline-none focus:ring-2 focus:ring-green-400"
+                  value={editTitulo}
+                  onChange={e => setEditTitulo(e.target.value)}
+                />
+                <input
+                  className="border border-gray-300 rounded-md p-2 flex-1 focus:outline-none focus:ring-2 focus:ring-green-400"
+                  value={editDescripcion}
+                  onChange={e => setEditDescripcion(e.target.value)}
+                />
+                <button
+                className="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded-md min-w-[70px]"
+                onClick={() => guardarEdicion(t.id)}
+                >
+                Guardar
+                </button>
+                <button
+                className="bg-gray-400 hover:bg-gray-500 text-white px-3 py-1 rounded-md min-w-[70px]"
+                onClick={() => setEditandoId(null)}
+                >
+                Cancelar
+                </button>
+              </div>
+            ) : (
+              <>
+                <span
+                  className="cursor-pointer flex-1"
+                  onClick={() => actualizarTarea(t.id, t.completada)}
+                >
+                  {t.titulo} - {t.descripcion}
+                </span>
+                <div className="flex gap-2">
+                  <button
+                    className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded-md"
+                    onClick={() => iniciarEdicion(t)}
+                  >
+                    Editar
+                  </button>
+                  <button
+                    className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded-md"
+                    onClick={() => eliminarTarea(t.id)}
+                  >
+                    Eliminar
+                  </button>
+                </div>
+              </>
+            )}
+          </li>
+        ))}
       </ul>
     </div>
   );
